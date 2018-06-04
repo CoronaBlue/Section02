@@ -1,14 +1,16 @@
 // Preprocessor section
 #include <iostream>
 #include <string>
-
-using namespace std;
+#include "FBullCowGame.h"
 
 // Function prototypes.
 void PrintIntro();
 void PlayGame();
-string GetGuess();
+std::string GetGuess();
 bool PlayAgain();
+
+// Global variables.
+FBullCowGame BCGame;
 
 // Entry point.
 int main()
@@ -27,9 +29,9 @@ void PrintIntro()
 {
 	//Print the intro for the game.
 	constexpr int WORD_LENGTH = 5; // Keeping track of the secret word length.
-	cout << "Welcome to Bulls and Cows, a fun word game.\n";
-	cout << "Can you guess the " << WORD_LENGTH << " letter isogram that I'm thinking of?\n";
-	cout << endl;
+	std::cout << "Welcome to Bulls and Cows, a fun word game.\n";
+	std::cout << "Can you guess the " << WORD_LENGTH << " letter isogram that I'm thinking of?\n";
+	std::cout << std::endl;
 
 	return;
 }
@@ -37,38 +39,40 @@ void PrintIntro()
 void PlayGame()
 {
 	// Set up variables and constants.
-	constexpr int NUMBER_OF_TURNS = 5;
-	string Guess = "";
+	int MaxTries = BCGame.GetMaxTries();
+	std::string Guess = "";
 
 	// For number of turns...
-	for (int count = 0; count < NUMBER_OF_TURNS; count++)
+	for (int count = 0; count < MaxTries; count++)
 	{
 		// Get the player's guess.
 		Guess = GetGuess();
 
 		// Repeat the guess back to the player.
-		cout << "Your guess was " << Guess << endl;
-		cout << endl;
+		std::cout << "Your guess was " << Guess << std::endl;
+		std::cout << std::endl;
 	}
 }
 
-string GetGuess()
+std::string GetGuess()
 {
+	int CurrentTry = BCGame.GetCurrentTry(); // Used to store the current try.
+	std::string Guess = ""; // Used to store the player's guess.
+
 	// Prompt for a guess using console input.
-	string Guess = ""; // Used to store the player's guess.
-	cout << "Please enter your guess: ";
-	getline(cin, Guess);
+	std::cout << "Try " << CurrentTry << ". Please enter your guess: ";
+	std::getline(std::cin, Guess);
 
 	return Guess;
 }
 
 bool PlayAgain()
 {
-	string Result = "";
+	std::string Result = "";
 
-	cout << "Do you want to play again (y/n)? ";
-	getline(cin, Result);
-	cout << endl;
+	std::cout << "Do you want to play again (y/n)? ";
+	std::getline(std::cin, Result);
+	std::cout << std::endl;
 
 	return (tolower(Result[0]) == 'y');
 }
