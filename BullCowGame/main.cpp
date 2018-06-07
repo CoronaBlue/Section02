@@ -5,7 +5,9 @@ For game logic, see the FBullCowGame class.
 
 // Preprocessor section
 #include <iostream>
+#include <algorithm>
 #include <string>
+#include <locale>
 #include "FBullCowGame.h"
 
 // Unreal text substitutions.
@@ -15,7 +17,7 @@ using int32 = int;
 // Function prototypes.
 void PrintIntro();
 void PlayGame();
-FText GetGuess();
+FText GetValidGuess();
 bool PlayAgain();
 
 // Global variables.
@@ -37,9 +39,8 @@ int main()
 void PrintIntro()
 {
 	//Print the intro for the game.
-	constexpr int32 WORD_LENGTH = 5; // Keeping track of the secret word length.
 	std::cout << "Welcome to Bulls and Cows, a fun word game.\n";
-	std::cout << "Can you guess the " << WORD_LENGTH << " letter isogram that I'm thinking of?\n";
+	std::cout << "Can you guess the " << BCGame.GetHiddenWordLength() << " letter isogram that I'm thinking of?\n";
 	std::cout << std::endl;
 
 	return;
@@ -53,16 +54,21 @@ void PlayGame()
 	// Set up variables and constants.
 	int32 MaxTries = BCGame.GetMaxTries();
 	FText Guess = "";
+	FBullCowCount BullCowCount;
 
 	// For number of turns...
 	// TODO Change the for loop to a while loop.
 	for (int32 count = 0; count < MaxTries; count++)
 	{
 		// Get the player's guess.
-		Guess = GetGuess(); // TODO Check for valid guesses.
+		Guess = GetValidGuess();
 
-		// Submit valid guess to the game.
+		// Submit valid guess to the game, and receive counts.
+		BullCowCount = BCGame.SubmitGuess(Guess);
+
 		// Print the number of Bulls and Cows.
+		std::cout << "Bulls = " << BullCowCount.Bulls;
+		std::cout << ". Cows = " << BullCowCount.Cows << std::endl;
 
 		// Repeat the guess back to the player.
 		std::cout << "Your guess was " << Guess << std::endl;
@@ -72,16 +78,30 @@ void PlayGame()
 	// TODO Summarize the game.
 }
 
-FText GetGuess()
+FText GetValidGuess()
 {
 	int32 CurrentTry = BCGame.GetCurrentTry(); // Used to store the current try.
 	FText Guess = ""; // Used to store the player's guess.
+	EGuessStatus Status; // Validity status of the guess.
 
 	// Prompt for a guess using console input.
 	std::cout << "Try " << CurrentTry << ". Please enter your guess: ";
 	std::getline(std::cin, Guess);
+	std::transform(Guess.begin(), Guess.end(), Guess.begin(), ::tolower);
 
-	return Guess;
+	// Check guess validity.
+	Status = BCGame.CheckGuessValidity(Guess);
+	switch (Status)
+	{
+		case EGuessStatus::Wrong_Length:
+			std::cout << "Please enter a " << BCGame.GetHiddenWordLength() << " letter word.\n";
+			break;
+		case EGuessStatus::Not_Isogram:
+			std::cout << "Please enter an isogram.\n";
+			break;
+		default:
+			return Guess;
+	}
 }
 
 bool PlayAgain()
