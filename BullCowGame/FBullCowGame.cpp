@@ -1,19 +1,34 @@
+// Preprocessor section.
 #include "FBullCowGame.h"
 
-int FBullCowGame::GetMaxTries() { return MyMaxTries; }
-int FBullCowGame::GetCurrentTry() { return MyCurrentTry; }
+// Unreal substitutions.
+using FString = std::string;
+using int32 = int;
+
+// Constructor implementation.
+FBullCowGame::FBullCowGame()
+{
+	Reset();
+}
+
+// Getter methods.
+int32 FBullCowGame::GetMaxTries() const { return MyMaxTries; }
+int32 FBullCowGame::GetCurrentTry() const { return MyCurrentTry; }
+
 
 void FBullCowGame::Reset()
 {
+	MyCurrentTry = 1;
+	MyMaxTries = 8;
 	return;
 }
 
-bool FBullCowGame::IsGameWon()
+bool FBullCowGame::IsGameWon() const
 {
 	return false;
 }
 
-bool FBullCowGame::CheckGuessValidity(std::string)
+bool FBullCowGame::CheckGuessValidity(FString)
 {
 	return false;
 }
