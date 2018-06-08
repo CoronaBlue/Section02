@@ -19,6 +19,8 @@ enum class EGuessStatus
 	OK,
 	Not_Isogram,
 	Wrong_Length,
+	Not_Lowercase,
+	Invalid_Status
 };
 
 class FBullCowGame
@@ -36,7 +38,7 @@ public:
 
 	// Other public functions.
 	void Reset(); // TODO Make a more rich return value.
-	FBullCowCount SubmitGuess(FString Guess);
+	FBullCowCount SubmitValidGuess(FString Guess);
 
 private:
 	int32 MyCurrentTry;

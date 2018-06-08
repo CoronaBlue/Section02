@@ -7,7 +7,6 @@ For game logic, see the FBullCowGame class.
 #include <iostream>
 #include <algorithm>
 #include <string>
-#include <locale>
 #include "FBullCowGame.h"
 
 // Unreal text substitutions.
@@ -64,7 +63,7 @@ void PlayGame()
 		Guess = GetValidGuess();
 
 		// Submit valid guess to the game, and receive counts.
-		BullCowCount = BCGame.SubmitGuess(Guess);
+		BullCowCount = BCGame.SubmitValidGuess(Guess);
 
 		// Print the number of Bulls and Cows.
 		std::cout << "Bulls = " << BullCowCount.Bulls;
@@ -82,26 +81,39 @@ FText GetValidGuess()
 {
 	int32 CurrentTry = BCGame.GetCurrentTry(); // Used to store the current try.
 	FText Guess = ""; // Used to store the player's guess.
-	EGuessStatus Status; // Validity status of the guess.
+	EGuessStatus Status = EGuessStatus::Invalid_Status; // Validity status of the guess.
 
-	// Prompt for a guess using console input.
-	std::cout << "Try " << CurrentTry << ". Please enter your guess: ";
-	std::getline(std::cin, Guess);
-	std::transform(Guess.begin(), Guess.end(), Guess.begin(), ::tolower);
-
-	// Check guess validity.
-	Status = BCGame.CheckGuessValidity(Guess);
-	switch (Status)
+	do
 	{
+		// Prompt for a guess using console input.
+		std::cout << "Try " << CurrentTry << ". Please enter your guess: ";
+		std::getline(std::cin, Guess);
+
+		// Check guess validity.
+		Status = BCGame.CheckGuessValidity(Guess);
+
+		// Give feedback.
+		switch (Status)
+		{
 		case EGuessStatus::Wrong_Length:
 			std::cout << "Please enter a " << BCGame.GetHiddenWordLength() << " letter word.\n";
 			break;
 		case EGuessStatus::Not_Isogram:
 			std::cout << "Please enter an isogram.\n";
 			break;
+		case EGuessStatus::Not_Lowercase:
+			std::cout << "The guess must be all lowercase.\n";
+			break;
 		default:
-			return Guess;
-	}
+			// Assume that the guess is valid.
+			break;
+		}
+
+		std::cout << std::endl;
+
+	} while (Status != EGuessStatus::OK);
+
+	return Guess;
 }
 
 bool PlayAgain()
