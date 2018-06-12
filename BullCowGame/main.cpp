@@ -17,6 +17,7 @@ using int32 = int;
 void PrintIntro();
 void PlayGame();
 FText GetValidGuess();
+void PrintGameSummary();
 bool PlayAgain();
 
 // Global variables.
@@ -39,6 +40,13 @@ void PrintIntro()
 {
 	//Print the intro for the game.
 	std::cout << "Welcome to Bulls and Cows, a fun word game.\n";
+	std::cout << std::endl;
+	std::cout << "          }   {         ___ " << std::endl;
+	std::cout << "          (o o)        (o o) " << std::endl;
+	std::cout << "   /-------\\ /          \\ /-------\\ " << std::endl;
+	std::cout << "  / | BULL |O            O| COW  | \\ " << std::endl;
+	std::cout << " *  |----- |              |------|  * " << std::endl;
+	std::cout << "    ^      ^              ^      ^ " << std::endl;
 	std::cout << "Can you guess the " << BCGame.GetHiddenWordLength() << " letter isogram that I'm thinking of?\n";
 	std::cout << std::endl;
 
@@ -55,9 +63,8 @@ void PlayGame()
 	FText Guess = "";
 	FBullCowCount BullCowCount;
 
-	// For number of turns...
-	// TODO Change the for loop to a while loop.
-	for (int32 count = 0; count < MaxTries; count++)
+	// Ask for guesses while the game is not won, and there are still tries remaining...
+	while (!BCGame.IsGameWon() && BCGame.GetCurrentTry() <= MaxTries)
 	{
 		// Get the player's guess.
 		Guess = GetValidGuess();
@@ -70,11 +77,13 @@ void PlayGame()
 		std::cout << ". Cows = " << BullCowCount.Cows << std::endl;
 
 		// Repeat the guess back to the player.
-		std::cout << "Your guess was " << Guess << std::endl;
 		std::cout << std::endl;
 	}
 
-	// TODO Summarize the game.
+	// Summarize the game.
+	PrintGameSummary();
+
+	return;
 }
 
 FText GetValidGuess()
@@ -86,7 +95,7 @@ FText GetValidGuess()
 	do
 	{
 		// Prompt for a guess using console input.
-		std::cout << "Try " << CurrentTry << ". Please enter your guess: ";
+		std::cout << "Try " << CurrentTry << " of " << BCGame.GetMaxTries() << ". Please enter your guess: ";
 		std::getline(std::cin, Guess);
 
 		// Check guess validity.
@@ -96,24 +105,38 @@ FText GetValidGuess()
 		switch (Status)
 		{
 		case EGuessStatus::Wrong_Length:
-			std::cout << "Please enter a " << BCGame.GetHiddenWordLength() << " letter word.\n";
+			std::cout << "Please enter a " << BCGame.GetHiddenWordLength() << " letter word.\n\n";
 			break;
 		case EGuessStatus::Not_Isogram:
-			std::cout << "Please enter an isogram.\n";
+			std::cout << "Please enter an isogram.\n\n";
 			break;
 		case EGuessStatus::Not_Lowercase:
-			std::cout << "The guess must be all lowercase.\n";
+			std::cout << "The guess must be all lowercase letters.\n\n";
 			break;
 		default:
 			// Assume that the guess is valid.
 			break;
 		}
 
-		std::cout << std::endl;
-
 	} while (Status != EGuessStatus::OK);
 
 	return Guess;
+}
+
+void PrintGameSummary()
+{
+	if (BCGame.IsGameWon())
+	{
+		std::cout << "Congratulations! You win!\n";
+	}
+	else
+	{
+		std::cout << "Sorry, you lose. Better luck next time.\n";
+	}
+
+	std::cout << std::endl;
+
+	return;
 }
 
 bool PlayAgain()

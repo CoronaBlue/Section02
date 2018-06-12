@@ -30,18 +30,23 @@ public:
 	FBullCowGame();
 
 	// Constant methods.
-	int32 GetMaxTries() const;
 	int32 GetCurrentTry() const;
 	int32 GetHiddenWordLength() const;
 	bool IsGameWon() const;
-	EGuessStatus CheckGuessValidity(FString Guess) const; // TODO Make a more rich return value.
+	EGuessStatus CheckGuessValidity(FString Guess) const;
+	int32 GetMaxTries() const;
 
 	// Other public functions.
 	void Reset(); // TODO Make a more rich return value.
 	FBullCowCount SubmitValidGuess(FString Guess);
 
 private:
+	// Variables
 	int32 MyCurrentTry;
-	int32 MyMaxTries;
 	FString MyHiddenWord;
+	bool bGameWon;
+
+	// Functions
+	bool IsIsogram(FString Guess) const;
+	bool IsLowercase(FString Guess) const;
 };
