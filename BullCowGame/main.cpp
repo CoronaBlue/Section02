@@ -143,7 +143,7 @@ bool PlayAgain()
 {
 	FText Result = "";
 
-	std::cout << "Do you want to play again (y/n)? ";
+	std::cout << "Do you want to play again using the same word (y/n)? ";
 	std::getline(std::cin, Result);
 	std::cout << std::endl;
 
